@@ -6,5 +6,5 @@
 *.launch
 .settings/
 *.sublime-workspace
-/out
-/.gradle
+/movie-recommendation-app/out
+/movie-recommendation-app/.gradle

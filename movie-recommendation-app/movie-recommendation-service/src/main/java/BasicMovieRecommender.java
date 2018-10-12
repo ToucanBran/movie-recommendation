@@ -1,5 +1,8 @@
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
 import common.MovieRecommender;
 import common.User;
+import common.UserGetAgeCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,12 +11,12 @@ import java.util.List;
 
 public class BasicMovieRecommender implements MovieRecommender {
 
-    private User user;
+    private UserGetAgeCommand userGetAgeCommand;
     private HashMap<String, List<String>> movies = new HashMap<>();
     private static final int CHILD_MIN_AGE = 0, TEEN_MIN_AGE = 13, ADULT_MIN_AGE = 17;
     public BasicMovieRecommender(User user)
     {
-        this.user = user;
+        this.userGetAgeCommand = new UserGetAgeCommand(user);
         this.movies.put("child", new ArrayList<String>(
                 Arrays.asList("Shrek", "Coco", "The Incredibles")));
 
@@ -25,22 +28,20 @@ public class BasicMovieRecommender implements MovieRecommender {
     }
     @Override
     public List<String> getRecommendedMovies() {
-        int age = this.user.getAge();
-        if (age < CHILD_MIN_AGE)
-        {
-            throw new IllegalArgumentException("Age cannot be below 0");
-        }
-        else if (age < TEEN_MIN_AGE)
-        {
+        try {
+            int age = userGetAgeCommand.execute();
+            if (age < CHILD_MIN_AGE) {
+                throw new IllegalArgumentException("Age cannot be below 0");
+            } else if (age < TEEN_MIN_AGE) {
+                return this.movies.get("child");
+            } else if (age < ADULT_MIN_AGE) {
+                return this.movies.get("teen");
+            } else {
+                return this.movies.get("adult");
+            }
+        } catch (Exception e) {
             return this.movies.get("child");
         }
-        else if (age < ADULT_MIN_AGE)
-        {
-            return this.movies.get("teen");
-        }
-        else
-        {
-            return this.movies.get("adult");
-        }
+
     }
 }

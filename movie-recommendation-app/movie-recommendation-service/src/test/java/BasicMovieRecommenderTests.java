@@ -3,12 +3,13 @@ import common.User;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -66,7 +67,25 @@ public class BasicMovieRecommenderTests {
     @Test
     public void getRecommendedMovies_userException_success() {
         User user = mock(User.class);
-        when(user.getAge()).thenThrow(new Exception("Error occurred."));
+        when(user.getAge()).thenThrow(new RuntimeException());
+        BasicMovieRecommender basicMovieRecommender = new BasicMovieRecommender(user);
+        List<String> movieRecommendationList = basicMovieRecommender.getRecommendedMovies();
+        List<String> expectedMovieRecommendationList = this.movies.get("child");
+
+        Assert.assertTrue(movieRecommendationList.containsAll(expectedMovieRecommendationList)
+                && expectedMovieRecommendationList.containsAll(movieRecommendationList));
+    }
+
+    @Test
+    public void getRecommendedMovies_userTimeout_success() {
+        User user = mock(User.class);
+        when(user.getAge()).thenAnswer(new Answer<Integer>() {
+            @Override
+            public Integer answer(InvocationOnMock invocation) throws InterruptedException {
+                Thread.sleep(100);
+                return 21;
+            }
+        });
         BasicMovieRecommender basicMovieRecommender = new BasicMovieRecommender(user);
         List<String> movieRecommendationList = basicMovieRecommender.getRecommendedMovies();
         List<String> expectedMovieRecommendationList = this.movies.get("child");

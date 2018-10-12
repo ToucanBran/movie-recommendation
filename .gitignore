@@ -8,3 +8,4 @@
 *.sublime-workspace
 out/
 /movie-recommendation-app/.gradle
+build/

@@ -2,6 +2,5 @@ rootProject.name = 'movierecommendation'
 
 include 'movie-recommendation-service'
 include 'user-service'
-include 'movie-recommendation-service'
-include 'user-service'
+include 'library'
 

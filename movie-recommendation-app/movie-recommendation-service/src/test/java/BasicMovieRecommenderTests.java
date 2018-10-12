@@ -62,4 +62,16 @@ public class BasicMovieRecommenderTests {
         Assert.assertTrue(movieRecommendationList.containsAll(expectedMovieRecommendationList)
                 && expectedMovieRecommendationList.containsAll(movieRecommendationList));
     }
+
+    @Test
+    public void getRecommendedMovies_userException_success() {
+        User user = mock(User.class);
+        when(user.getAge()).thenThrow(new Exception("Error occurred."));
+        BasicMovieRecommender basicMovieRecommender = new BasicMovieRecommender(user);
+        List<String> movieRecommendationList = basicMovieRecommender.getRecommendedMovies();
+        List<String> expectedMovieRecommendationList = this.movies.get("child");
+
+        Assert.assertTrue(movieRecommendationList.containsAll(expectedMovieRecommendationList)
+                && expectedMovieRecommendationList.containsAll(movieRecommendationList));
+    }
 }

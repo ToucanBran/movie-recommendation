@@ -82,7 +82,7 @@ public class BasicMovieRecommenderTests {
         when(user.getAge()).thenAnswer(new Answer<Integer>() {
             @Override
             public Integer answer(InvocationOnMock invocation) throws InterruptedException {
-                Thread.sleep(100);
+                Thread.sleep(101);
                 return 21;
             }
         });
